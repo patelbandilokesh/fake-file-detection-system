@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Scan Result</title>
+  </head>
+
+  <body
+    style="
+      text-align: center;
+      background: #0f172a;
+      color: white;
+      font-family: Arial;
+    "
+  >
+    <!-- BACK BUTTON -->
+    <div style="position: absolute; top: 20px; left: 20px">
+      <a href="/user">
+        <button
+          style="
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(45deg, #00c6ff, #0072ff);
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+          "
+        >
+          ⬅ Back
+        </button>
+      </a>
+    </div>
+
+    <h1>🔍 Scan Result</h1>
+
+    {% if result %} {% if result.status == "Genuine" %}
+    <div style="color: lightgreen">✅ Genuine File</div>
+
+    {% elif result.status == "Duplicate" %}
+    <div style="color: orange">⚠️ Duplicate File</div>
+
+    {% elif result.status == "Fake" %}
+    <div style="color: red">❌ Fake File</div>
+
+    {% elif result.status == "Harmful" %}
+    <div style="color: red">☠️ Harmful File</div>
+    {% endif %}
+
+    <hr style="margin: 30px" />
+
+    <!-- DETAILS -->
+    <p><b>File Type:</b> {{ result.file_type }}</p>
+    <p><b>MIME Type:</b> {{ result.mime }}</p>
+    <p><b>Hash:</b> {{ result.hash[:10] }}************</p>
+
+    {% endif %}
+  </body>
+</html>

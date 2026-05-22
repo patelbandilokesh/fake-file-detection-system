@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Portal Selection</title>
+
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .container {
+        background: white;
+        padding: 40px;
+        border-radius: 12px;
+        text-align: center;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      }
+
+      h1 {
+        margin-bottom: 30px;
+      }
+
+      .button-box {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+      }
+
+      .btn {
+        padding: 15px 30px;
+        font-size: 18px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: 0.3s;
+        color: white;
+      }
+
+      .admin {
+        background: #ff4b5c;
+      }
+
+      .admin:hover {
+        background: #d7384a;
+        transform: scale(1.05);
+      }
+
+      .user {
+        background: #1dd1a1;
+      }
+
+      .user:hover {
+        background: #10ac84;
+        transform: scale(1.05);
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>Choose Your Role</h1>
+
+      <div class="button-box">
+        <!-- ADMIN BUTTON -->
+
+        <button
+          class="btn admin"
+          onclick="window.location.href = '/admin_login'"
+        >
+          Admin
+        </button>
+
+        <!-- USER BUTTON -->
+
+        <button class="btn user" onclick="window.location.href = '/login'">
+          User
+        </button>
+      </div>
+    </div>
+
+    <script>
+      function goAdmin() {
+        window.location.href = "/adminlogin";
+      }
+
+      function goUser() {
+        window.location.href = "/login";
+      }
+    </script>
+  </body>
+</html>
