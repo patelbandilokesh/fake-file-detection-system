@@ -1,6 +1,5 @@
 import os
 import hashlib
-import magic
 
 EXTENSION_MAP = {
     "jpeg": [".jpg", ".jpeg"],
@@ -53,12 +52,23 @@ def analyze_file(filepath):
     result["extension"] = ext
 
     # 🔍 MIME
-    try:
-        mime = magic.from_file(filepath, mime=True)
-    except:
-        mime = "unknown"
+    # 🔍 MIME
+mime = "unknown"
 
-    result["mime"] = mime
+if ext in [".jpg", ".jpeg"]:
+    mime = "jpeg"
+elif ext == ".png":
+    mime = "png"
+elif ext == ".gif":
+    mime = "gif"
+elif ext == ".pdf":
+    mime = "pdf"
+elif ext in [".zip", ".docx", ".pptx", ".xlsx"]:
+    mime = "zip"
+elif ext == ".mp3":
+    mime = "mp3"
+
+result["mime"] = mime
 
     # 📄 HEADER
     with open(filepath, "rb") as f:
