@@ -71,8 +71,8 @@ elif ext == ".mp3":
 result["mime"] = mime
 
     # 📄 HEADER
-    with open(filepath, "rb") as f:
-        header = f.read(16)
+with open(filepath, "rb") as f:
+    header = f.read(16)
 
     # -------------------------
     # 🔴 HARMFUL
