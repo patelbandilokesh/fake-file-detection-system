@@ -18,9 +18,11 @@ EXTENSION_MAP = {
 # -------------------------
 def sha512_file(path):
     h = hashlib.sha512()
+
     with open(path, "rb") as f:
         for chunk in iter(lambda: f.read(8192), b""):
             h.update(chunk)
+
     return h.hexdigest()
 
 
@@ -28,11 +30,14 @@ def sha512_file(path):
 # STREAM
 # -------------------------
 def read_stream(path):
+
     with open(path, "rb") as f:
         while True:
             data = f.read(4096)
+
             if not data:
                 break
+
             yield data
 
 
@@ -52,27 +57,31 @@ def analyze_file(filepath):
     result["extension"] = ext
 
     # 🔍 MIME
-    # 🔍 MIME
-mime = "unknown"
+    mime = "unknown"
 
-if ext in [".jpg", ".jpeg"]:
-    mime = "jpeg"
-elif ext == ".png":
-    mime = "png"
-elif ext == ".gif":
-    mime = "gif"
-elif ext == ".pdf":
-    mime = "pdf"
-elif ext in [".zip", ".docx", ".pptx", ".xlsx"]:
-    mime = "zip"
-elif ext == ".mp3":
-    mime = "mp3"
+    if ext in [".jpg", ".jpeg"]:
+        mime = "jpeg"
 
-result["mime"] = mime
+    elif ext == ".png":
+        mime = "png"
+
+    elif ext == ".gif":
+        mime = "gif"
+
+    elif ext == ".pdf":
+        mime = "pdf"
+
+    elif ext in [".zip", ".docx", ".pptx", ".xlsx"]:
+        mime = "zip"
+
+    elif ext == ".mp3":
+        mime = "mp3"
+
+    result["mime"] = mime
 
     # 📄 HEADER
-with open(filepath, "rb") as f:
-    header = f.read(16)
+    with open(filepath, "rb") as f:
+        header = f.read(16)
 
     # -------------------------
     # 🔴 HARMFUL
@@ -92,16 +101,22 @@ with open(filepath, "rb") as f:
 
     if header.startswith(b"\xff\xd8\xff"):
         file_type = "jpeg"
+
     elif header.startswith(b"\x89PNG"):
         file_type = "png"
+
     elif header.startswith(b"GIF"):
         file_type = "gif"
+
     elif header.startswith(b"%PDF"):
         file_type = "pdf"
+
     elif header.startswith(b"PK\x03\x04"):
         file_type = "zip"
+
     elif header.startswith(b"ID3"):
         file_type = "mp3"
+
     else:
         result["status"] = "Fake"
         return result
@@ -114,18 +129,23 @@ with open(filepath, "rb") as f:
     if file_type == "pdf":
 
         obj = 0
-        xref = trailer = eof = False
+        xref = False
+        trailer = False
+        eof = False
         malicious = False
 
         for chunk in read_stream(filepath):
+
             low = chunk.lower()
 
             obj += low.count(b"obj")
 
             if b"xref" in low:
                 xref = True
+
             if b"trailer" in low:
                 trailer = True
+
             if b"%%eof" in low:
                 eof = True
 
@@ -150,16 +170,23 @@ with open(filepath, "rb") as f:
     # -------------------------
     # MIME CHECK
     # -------------------------
-    if file_type not in mime:
+    if file_type != mime:
         result["status"] = "Fake"
         return result
 
     # -------------------------
     # CONTENT SCAN
     # -------------------------
-    suspicious = [b"powershell", b"cmd.exe", b"/bin/bash", b"<script>", b"eval("]
+    suspicious = [
+        b"powershell",
+        b"cmd.exe",
+        b"/bin/bash",
+        b"<script>",
+        b"eval("
+    ]
 
     for chunk in read_stream(filepath):
+
         if any(s in chunk.lower() for s in suspicious):
             result["status"] = "Harmful"
             return result
@@ -168,4 +195,5 @@ with open(filepath, "rb") as f:
     # FINAL
     # -------------------------
     result["status"] = "Genuine"
+
     return result
