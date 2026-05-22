@@ -1,0 +1,2316 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Admin Dashboard</title>
+
+    <!-- CHART JS -->
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- ICONS -->
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial;
+      }
+
+      body {
+        background: #f3f6fb;
+        display: flex;
+      }
+
+      /* ================= SIDEBAR ================= */
+
+      .sidebar {
+        width: 250px;
+        height: 100vh;
+        background: #111827;
+        position: fixed;
+        left: 0;
+        top: 0;
+        color: white;
+      }
+
+      .logo {
+        text-align: center;
+        font-size: 45px;
+        font-weight: bold;
+        padding: 35px 0;
+      }
+
+      .menu {
+        list-style: none;
+      }
+
+      .menu li {
+        padding: 22px 30px;
+        cursor: pointer;
+        transition: 0.4s;
+        font-size: 22px;
+      }
+
+      .menu li:hover {
+        background: #2563eb;
+      }
+
+      .active {
+        background: #2563eb;
+      }
+
+      .logout {
+        background: #dc2626;
+        margin-top: 180px;
+      }
+
+      /* ================= MAIN ================= */
+
+      .main {
+        margin-left: 250px;
+        width: calc(100% - 250px);
+        padding: 30px;
+        overflow-x: hidden;
+      }
+
+      .title {
+        font-size: 55px;
+        font-weight: bold;
+        margin-bottom: 30px;
+        color: #111827;
+      }
+
+      /* ================= SEARCH ================= */
+
+      .search-box {
+        margin-bottom: 30px;
+      }
+
+      .search-box input {
+        width: 100%;
+        padding: 20px;
+        border: none;
+        border-radius: 14px;
+        font-size: 20px;
+        outline: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      /* ================= CARDS ================= */
+
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+
+        gap: 20px;
+
+        margin-bottom: 30px;
+      }
+
+      .card {
+        background: white;
+        padding: 25px;
+        border-radius: 18px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        transition: 0.4s;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .card:hover {
+        transform: translateY(-8px) scale(1.03);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.18);
+      }
+
+      .card::before {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 5px;
+        background: #2563eb;
+        left: 0;
+        top: 0;
+      }
+
+      .card h3 {
+        color: #666;
+        margin-bottom: 10px;
+        font-size: 22px;
+      }
+
+      .card h1 {
+        font-size: 55px;
+        color: #2563eb;
+      }
+
+      /* ================= PARTICULAR USER ================= */
+
+      #particularSection {
+        display: none;
+        margin-bottom: 30px;
+      }
+
+      .details-box {
+        background: white;
+        padding: 25px;
+        border-radius: 18px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      }
+
+      .details-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+
+        gap: 20px;
+        margin-top: 20px;
+      }
+
+      .detail-card {
+        background: white;
+        border-radius: 18px;
+        padding: 25px;
+        transition: 0.4s;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        cursor: pointer;
+      }
+
+      .detail-card:hover {
+        transform: translateY(-8px) scale(1.03);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.18);
+      }
+
+      .detail-card i {
+        font-size: 38px;
+        margin-bottom: 15px;
+        color: #2563eb;
+      }
+
+      .detail-card p {
+        color: #666;
+        margin-bottom: 10px;
+        font-size: 22px;
+      }
+
+      .detail-card h2 {
+        font-size: 45px;
+        color: #111827;
+      }
+
+      /* ================= GRAPHS ================= */
+
+      .graphs {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+
+        gap: 25px;
+      }
+
+      .graph-box {
+        background: white;
+        padding: 25px;
+        border-radius: 18px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        height: 450px;
+      }
+
+      .graph-box h2 {
+        margin-bottom: 20px;
+        color: #111827;
+      }
+
+      canvas {
+        width: 100% !important;
+        height: 320px !important;
+      }
+      .fake-card {
+        max-width: 230px;
+      }
+      .status-badge {
+        padding: 8px 18px;
+
+        border-radius: 30px;
+
+        color: white;
+
+        font-size: 14px;
+
+        font-weight: 600;
+
+        display: inline-block;
+
+        text-transform: capitalize;
+      }
+
+      /* GENUINE */
+
+      .status-badge.genuine {
+        background: #22c55e;
+      }
+
+      /* HARMFUL */
+
+      .status-badge.harmful {
+        background: #ef4444;
+      }
+
+      /* DUPLICATE */
+
+      .status-badge.duplicate {
+        background: #6a7deb;
+      }
+
+      /* FAKE */
+
+      .status-badge.fake {
+        background: #ff9500;
+      }
+      table td,
+      table th {
+        padding: 16px 20px;
+      }
+      table th:first-child,
+      table td:first-child {
+        width: 80px;
+
+        text-align: center;
+      }
+      table th:nth-child(2),
+      table td:nth-child(2) {
+        padding-left: 35px;
+      }
+      .report-tabs {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 25px;
+      }
+
+      .report-btn {
+        padding: 12px 25px;
+        border: none;
+        border-radius: 10px;
+        background: #2563eb;
+        color: white;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: 600;
+      }
+
+      .report-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 25px;
+      }
+
+      .report-card {
+        background: white;
+        padding: 20px;
+        border-radius: 18px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+      }
+
+      .report-title {
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 20px;
+      }
+
+      .report-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .report-table th {
+        background: #f3f4f6;
+        padding: 12px;
+        text-align: left;
+      }
+
+      .report-table td {
+        padding: 12px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .report-actions {
+        margin-top: 20px;
+        display: flex;
+        gap: 15px;
+      }
+
+      .report-actions button {
+        padding: 10px 18px;
+        border: none;
+        border-radius: 8px;
+        background: #22c55e;
+        color: white;
+        cursor: pointer;
+      }
+
+      .search-user-report {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 25px;
+      }
+
+      .search-user-report input {
+        flex: 1;
+        padding: 14px;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+      }
+      /* =========================================================
+      REPORTS PAGE FULL ATTRACTIVE CSS
+      ========================================================= */
+
+      #reportsPage {
+        padding: 30px;
+        background: #f4f7ff;
+        min-height: 100vh;
+        margin-left: 260px;
+      }
+
+      /* =========================================================
+      HEADER
+      ========================================================= */
+
+      .page-header {
+        margin-bottom: 30px;
+      }
+
+      .page-header h1 {
+        font-size: 42px;
+        font-weight: 800;
+        color: #111827;
+        letter-spacing: 1px;
+      }
+
+      /* =========================================================
+      TOP BUTTONS
+      ========================================================= */
+
+      .report-tabs {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 35px;
+        flex-wrap: wrap;
+      }
+
+      .report-btn {
+        padding: 14px 30px;
+        border: none;
+        border-radius: 14px;
+        background: white;
+        color: #2563eb;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.3s;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+      }
+
+      .report-btn:hover {
+        background: #2563eb;
+        color: white;
+        transform: translateY(-2px);
+      }
+
+      .active-report {
+        background: linear-gradient(135deg, #2563eb, #3b82f6);
+        color: white;
+      }
+
+      /* =========================================================
+      SEARCH BOX
+      ========================================================= */
+
+      .search-user-report {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 35px;
+        flex-wrap: wrap;
+      }
+
+      .search-user-report input {
+        flex: 1;
+        min-width: 250px;
+        padding: 15px 18px;
+        border: none;
+        border-radius: 14px;
+        background: white;
+        font-size: 16px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        outline: none;
+      }
+
+      .search-user-report button {
+        padding: 15px 28px;
+        border: none;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #2563eb, #3b82f6);
+        color: white;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      .search-user-report button:hover {
+        transform: scale(1.03);
+      }
+
+      /* =========================================================
+      REPORT GRID
+      ========================================================= */
+
+      .report-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+        gap: 28px;
+        margin-bottom: 30px;
+      }
+
+      /* =========================================================
+      CARD
+      ========================================================= */
+
+      .report-card {
+        background: white;
+        border-radius: 24px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        transition: 0.3s;
+        overflow-x: auto;
+      }
+
+      .report-card:hover {
+        transform: translateY(-4px);
+      }
+
+      .report-title {
+        font-size: 24px;
+        font-weight: 800;
+        margin-bottom: 22px;
+        color: #111827;
+      }
+
+      /* =========================================================
+      TABLE
+      ========================================================= */
+
+      .report-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 500px;
+      }
+
+      .report-table thead {
+        background: #eff6ff;
+      }
+
+      .report-table th {
+        padding: 16px;
+        text-align: left;
+        color: #1e3a8a;
+        font-size: 15px;
+        font-weight: 700;
+      }
+
+      .report-table td {
+        padding: 16px;
+        border-bottom: 1px solid #e5e7eb;
+        font-size: 15px;
+        color: #374151;
+      }
+
+      .report-table tr:hover {
+        background: #f9fafb;
+      }
+
+      /* =========================================================
+      STATUS COLORS
+      ========================================================= */
+
+      .status-active {
+        background: #dcfce7;
+        color: #16a34a;
+        padding: 6px 14px;
+        border-radius: 30px;
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .status-inactive {
+        background: #fee2e2;
+        color: #dc2626;
+        padding: 6px 14px;
+        border-radius: 30px;
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      /* =========================================================
+      BUTTONS
+      ========================================================= */
+
+      .report-actions {
+        margin-top: 22px;
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+
+      .report-actions button {
+        border: none;
+        padding: 12px 24px;
+        border-radius: 12px;
+        color: white;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      .report-actions button:nth-child(1) {
+        background: linear-gradient(135deg, #16a34a, #22c55e);
+      }
+
+      .report-actions button:nth-child(2) {
+        background: linear-gradient(135deg, #2563eb, #3b82f6);
+      }
+
+      .report-actions button:nth-child(3) {
+        background: linear-gradient(135deg, #7c3aed, #9333ea);
+      }
+
+      .report-actions button:hover {
+        transform: scale(1.04);
+      }
+
+      /* =========================================================
+      SCROLLBAR
+      ========================================================= */
+
+      .report-card::-webkit-scrollbar {
+        height: 8px;
+      }
+
+      .report-card::-webkit-scrollbar-thumb {
+        background: #2563eb;
+        border-radius: 10px;
+      }
+
+      /* =========================================================
+      MOBILE RESPONSIVE
+      ========================================================= */
+
+      @media (max-width: 768px) {
+        #reportsPage {
+          margin-left: 0;
+          padding: 18px;
+        }
+
+        .page-header h1 {
+          font-size: 30px;
+        }
+
+        .report-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .report-table {
+          min-width: 700px;
+        }
+      }
+      /* =======================================================
+      REPORTS PAGE ATTRACTIVE PROFESSIONAL CSS
+      ======================================================= */
+
+      #reportsPage {
+        background: #f4f7ff;
+        min-height: 100vh;
+        padding: 30px;
+      }
+
+      /* =======================================================
+      TITLE
+      ======================================================= */
+
+      #reportsPage .title {
+        font-size: 42px;
+        font-weight: 800;
+        color: #111827;
+        margin-bottom: 30px;
+        letter-spacing: 1px;
+      }
+
+      /* =======================================================
+      TOP BUTTONS
+      ======================================================= */
+
+      .report-buttons {
+        display: flex;
+        gap: 18px;
+        margin-bottom: 35px;
+        flex-wrap: wrap;
+      }
+
+      .report-buttons button {
+        padding: 14px 28px;
+        border: none;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #2563eb, #3b82f6);
+        color: white;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.3s;
+        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
+      }
+
+      .report-buttons button:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 12px 25px rgba(37, 99, 235, 0.35);
+      }
+
+      /* =======================================================
+      REPORT CARD
+      ======================================================= */
+
+      .report-box {
+        background: white;
+        border-radius: 24px;
+        padding: 28px;
+        margin-bottom: 35px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        transition: 0.3s;
+      }
+
+      .report-box:hover {
+        transform: translateY(-4px);
+      }
+
+      /* =======================================================
+      TOP SECTION
+      ======================================================= */
+
+      .report-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-bottom: 25px;
+      }
+
+      .report-top h2 {
+        font-size: 28px;
+        font-weight: 800;
+        color: #111827;
+      }
+
+      /* =======================================================
+      FILTERS
+      ======================================================= */
+
+      .filters {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .filters input {
+        padding: 14px 18px;
+        border: none;
+        border-radius: 14px;
+        background: #f3f4f6;
+        font-size: 15px;
+        outline: none;
+        min-width: 180px;
+        transition: 0.3s;
+      }
+
+      .filters input:focus {
+        background: white;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+      }
+
+      .filters button {
+        padding: 14px 24px;
+        border: none;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #111827, #1f2937);
+        color: white;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      .filters button:hover {
+        transform: scale(1.03);
+      }
+
+      /* =======================================================
+      TABLE
+      ======================================================= */
+
+      .table-responsive {
+        overflow-x: auto;
+        border-radius: 18px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 950px;
+        overflow: hidden;
+        border-radius: 18px;
+      }
+
+      /* =======================================================
+      TABLE HEADER
+      ======================================================= */
+
+      table thead {
+        background: linear-gradient(135deg, #1e3a8a, #2563eb);
+      }
+
+      table th {
+        color: white;
+        padding: 18px;
+        text-align: center;
+        font-size: 15px;
+        font-weight: 700;
+        border: none;
+      }
+
+      /* =======================================================
+      TABLE BODY
+      ======================================================= */
+
+      table td {
+        padding: 16px;
+        text-align: center;
+        font-size: 14px;
+        color: #374151;
+        border-bottom: 1px solid #e5e7eb;
+        background: white;
+      }
+
+      table tr:hover td {
+        background: #f9fafb;
+        transition: 0.2s;
+      }
+
+      /* =======================================================
+      SUB TITLES
+      ======================================================= */
+
+      .report-sub-title {
+        margin-top: 35px;
+        margin-bottom: 18px;
+        font-size: 22px;
+        font-weight: 800;
+        color: #111827;
+      }
+
+      /* =======================================================
+      DOWNLOAD BUTTONS
+      ======================================================= */
+
+      .download-buttons {
+        margin-top: 25px;
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+      }
+
+      .download-buttons button {
+        padding: 13px 24px;
+        border: none;
+        border-radius: 14px;
+        color: white;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      /* PDF */
+
+      .download-buttons button:nth-child(1) {
+        background: linear-gradient(135deg, #dc2626, #ef4444);
+      }
+
+      /* EXCEL */
+
+      .download-buttons button:nth-child(2) {
+        background: linear-gradient(135deg, #16a34a, #22c55e);
+      }
+
+      /* SAVE */
+
+      .download-buttons button:nth-child(3) {
+        background: linear-gradient(135deg, #2563eb, #3b82f6);
+      }
+
+      .download-buttons button:hover {
+        transform: translateY(-2px) scale(1.03);
+      }
+
+      /* =======================================================
+      SEARCH USER
+      ======================================================= */
+
+      .search-user-box {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+      }
+
+      .search-user-box input {
+        flex: 1;
+        min-width: 280px;
+        padding: 15px 18px;
+        border: none;
+        border-radius: 16px;
+        background: white;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+        font-size: 15px;
+        outline: none;
+      }
+
+      .search-user-box button {
+        padding: 15px 24px;
+        border: none;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #2563eb, #3b82f6);
+        color: white;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      .search-user-box button:hover {
+        transform: scale(1.03);
+      }
+
+      /* =======================================================
+      STATUS BADGES
+      ======================================================= */
+
+      .status {
+        padding: 8px 16px;
+        border-radius: 30px;
+        font-size: 13px;
+        font-weight: 700;
+        display: inline-block;
+        color: white !important;
+      }
+
+      .genuine {
+        background: #22c55e;
+        color: white;
+      }
+
+      .fake {
+        background: #orange;
+        color: white;
+      }
+
+      .duplicate {
+        background: #2563eb;
+        color: white;
+      }
+      .harmful {
+        background: #ef4444;
+        color: white;
+      }
+
+      /* =======================================================
+      SCROLLBAR
+      ======================================================= */
+
+      .table-responsive::-webkit-scrollbar {
+        height: 8px;
+      }
+
+      .table-responsive::-webkit-scrollbar-thumb {
+        background: #2563eb;
+        border-radius: 20px;
+      }
+
+      /* =======================================================
+      MOBILE RESPONSIVE
+      ======================================================= */
+
+      @media (max-width: 768px) {
+        #reportsPage {
+          padding: 18px;
+        }
+
+        #reportsPage .title {
+          font-size: 30px;
+        }
+
+        .report-top {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .filters {
+          width: 100%;
+        }
+
+        .filters input {
+          width: 100%;
+        }
+
+        .filters button {
+          width: 100%;
+        }
+
+        .report-buttons {
+          flex-direction: column;
+        }
+
+        .report-buttons button {
+          width: 100%;
+        }
+
+        .download-buttons {
+          flex-direction: column;
+        }
+
+        .download-buttons button {
+          width: 100%;
+        }
+
+        .search-user-box {
+          flex-direction: column;
+        }
+
+        .search-user-box input,
+        .search-user-box button {
+          width: 100%;
+        }
+      }
+      #account {
+        min-height: 100vh;
+        justify-content: center;
+        align-items: center;
+        padding: 40px 20px;
+        background: linear-gradient(135deg, #0f172a, #1e293b);
+      }
+
+      /* MAIN CONTAINER */
+
+      .account-container {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      /* CARD */
+
+      .account-card {
+        width: 100%;
+        max-width: 500px;
+        background: #ffffff;
+        padding: 35px;
+        border-radius: 22px;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+        animation: fadeIn 0.4s ease;
+      }
+
+      /* TITLE */
+
+      .title {
+        display: none;
+      }
+
+      .account-heading {
+        text-align: center;
+        font-size: 34px;
+        font-weight: 700;
+        margin-bottom: 30px;
+        color: #111827;
+      }
+
+      /* INPUT GROUP */
+
+      .input-group {
+        margin-bottom: 20px;
+      }
+
+      .input-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 15px;
+        font-weight: 600;
+        color: #374151;
+      }
+
+      /* INPUTS */
+
+      .input-group input {
+        width: 100%;
+        padding: 14px 15px;
+        border: 1px solid #d1d5db;
+        border-radius: 12px;
+        font-size: 15px;
+        outline: none;
+        transition: 0.3s;
+        box-sizing: border-box;
+        background: #f9fafb;
+      }
+
+      .input-group input:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 10px rgba(37, 99, 235, 0.25);
+        background: #fff;
+      }
+
+      /* PASSWORD BOX */
+
+      .password-box {
+        position: relative;
+        width: 100%;
+      }
+
+      .password-box input {
+        padding-right: 50px;
+      }
+
+      /* EYE ICON */
+
+      .password-box span {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #000;
+        font-size: 18px;
+        transition: 0.3s;
+      }
+
+      .password-box span:hover {
+        color: #2563eb;
+      }
+
+      /* BUTTON */
+
+      .update-btn {
+        width: 100%;
+        padding: 14px;
+        border: none;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        color: white;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s;
+        margin-top: 10px;
+      }
+
+      .update-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 18px rgba(37, 99, 235, 0.35);
+      }
+
+      /* MESSAGE */
+
+      #accountMessage {
+        margin-top: 18px;
+        text-align: center;
+        font-size: 15px;
+        font-weight: 500;
+      }
+
+      /* ANIMATION */
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* RESPONSIVE */
+
+      @media (max-width: 600px) {
+        .account-card {
+          padding: 25px;
+        }
+
+        .account-heading {
+          font-size: 28px;
+        }
+      }
+      .back-wrapper {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 25px;
+      }
+
+      .back-btn {
+        width: 180px;
+        background: linear-gradient(135deg, #00bfff, #8a2be2);
+        color: white;
+        border: none;
+        padding: 14px 0;
+        border-radius: 16px;
+        cursor: pointer;
+        font-size: 20px;
+        font-weight: 700;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        transition: 0.3s ease;
+        margin: 0 auto;
+      }
+
+      .back-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 25px rgba(0, 191, 255, 0.4);
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- ================= SIDEBAR ================= -->
+
+    <div class="sidebar">
+      <div class="logo">ADMIN</div>
+
+      <ul class="menu">
+        <li id="dashboardMenu" class="active">📊 Dashboard</li>
+
+        <li id="usersMenu">👥 Users</li>
+
+        <li id="filesMenu">📁 Files</li>
+
+        <li id="accountMenu">👤 Account</li>
+      </ul>
+      <div class="back-wrapper">
+        <button onclick="history.back()" class="back-btn">🚪Logout</button>
+      </div>
+    </div>
+
+    <!-- ================= DASHBOARD ================= -->
+
+    <div class="main" id="dashboardPage">
+      <div class="title">Dashboard Analytics</div>
+
+      <!-- CARDS -->
+
+      <div class="cards">
+        <div class="card">
+          <h3>Total Users</h3>
+
+          <h1 id="totalUsers">0</h1>
+        </div>
+
+        <div class="card">
+          <h3>Total Files</h3>
+
+          <h1 id="totalFiles">0</h1>
+        </div>
+
+        <div class="card">
+          <h3>Harmful Files</h3>
+
+          <h1 id="harmfulFiles" style="color: red">0</h1>
+        </div>
+
+        <div class="card">
+          <h3>Today Uploads</h3>
+
+          <h1 id="todayUploads">0</h1>
+        </div>
+      </div>
+
+      <!-- GRAPHS -->
+
+      <div class="graphs">
+        <div class="graph-box">
+          <h2>Weekly Upload Trend</h2>
+
+          <canvas id="weeklyChart"></canvas>
+        </div>
+
+        <div class="graph-box">
+          <h2>Harmful vs Genuine Files</h2>
+
+          <canvas id="harmChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= USERS PAGE ================= -->
+
+    <div class="main" id="usersPage" style="display: none">
+      <div class="title">Users Analytics</div>
+
+      <!-- SEARCH -->
+
+      <div class="search-box">
+        <input
+          type="text"
+          id="searchUser"
+          placeholder="Search Username or uploaded_by ID..."
+        />
+      </div>
+
+      <!-- USERS CARDS -->
+
+      <div class="cards">
+        <div class="card">
+          <h3>Active Users</h3>
+
+          <h1 id="activeUsers">0</h1>
+        </div>
+
+        <div class="card">
+          <h3>Inactive Users</h3>
+
+          <h1 id="inactiveUsers">0</h1>
+        </div>
+
+        <div class="card">
+          <h3>Harmful Users</h3>
+
+          <h1 id="harmUsers" style="color: red">0</h1>
+        </div>
+
+        <div class="card">
+          <h3>New Users Today</h3>
+
+          <h1 id="newUsers">0</h1>
+        </div>
+      </div>
+
+      <!-- PARTICULAR USER -->
+
+      <div id="particularSection">
+        <div class="details-box">
+          <h2>Particular User Details</h2>
+
+          <div class="details-grid">
+            <div class="detail-card">
+              <i class="fa-solid fa-user"></i>
+
+              <p>Username</p>
+
+              <h2 id="detailUsername"></h2>
+            </div>
+
+            <div class="detail-card">
+              <i class="fa-solid fa-id-card"></i>
+
+              <p>Uploaded By ID</p>
+
+              <h2 id="detailId"></h2>
+            </div>
+
+            <div class="detail-card">
+              <i class="fa-solid fa-folder"></i>
+
+              <p>Total Files</p>
+
+              <h2 id="detailTotal"></h2>
+            </div>
+
+            <div class="detail-card">
+              <i
+                class="fa-solid fa-triangle-exclamation"
+                style="color: red"
+              ></i>
+
+              <p>Harmful Files</p>
+
+              <h2 id="detailHarmful"></h2>
+            </div>
+
+            <div class="detail-card">
+              <i class="fa-solid fa-virus" style="color: #ff9500"></i>
+
+              <p>Fake Files</p>
+
+              <h2 id="detailFake"></h2>
+            </div>
+
+            <div class="detail-card">
+              <i class="fa-solid fa-circle-check" style="color: green"></i>
+
+              <p>Genuine Files</p>
+
+              <h2 id="detailGenuine"></h2>
+            </div>
+
+            <div class="detail-card">
+              <i class="fa-solid fa-copy" style="color: #ff2d55"></i>
+
+              <p>Duplicate Files</p>
+
+              <h2 id="detailDuplicate"></h2>
+            </div>
+
+            <div class="detail-card">
+              <i class="fa-solid fa-signal" style="color: #00c7be"></i>
+
+              <p>Status</p>
+
+              <h2 id="detailStatus"></h2>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- USER GRAPHS -->
+
+      <div class="graphs">
+        <div class="graph-box">
+          <h2>Particular User Weekly Trend</h2>
+
+          <canvas id="userTrendChart"></canvas>
+        </div>
+
+        <div class="graph-box">
+          <h2>Daily Login Activity</h2>
+
+          <canvas id="loginChart"></canvas>
+        </div>
+      </div>
+    </div>
+    <!-- ================= FILES PAGE ================= -->
+
+    <div class="main" id="filesPage" style="display: none">
+      <div class="title">Files Management</div>
+
+      <!-- FILE CARDS -->
+
+      <div class="cards">
+        <div class="card">
+          <h3>Total Files</h3>
+          <h1 id="fileTotal">0</h1>
+        </div>
+
+        <div class="card">
+          <h3>Genuine Files</h3>
+          <h1 id="genuineCount" style="color: #22c55e">0</h1>
+        </div>
+
+        <div class="card">
+          <h3>Harmful Files</h3>
+          <h1 id="harmfulCount" style="color: red">0</h1>
+        </div>
+
+        <div class="card">
+          <h3>Duplicate Files</h3>
+          <h1 id="duplicateCount" style="color: #60a2cf">0</h1>
+        </div>
+      </div>
+      <div class="card fake-card">
+        <h3>Fake Files</h3>
+        <h1 id="fakeCount" style="color: #ff9500">0</h1>
+      </div>
+      <br />
+
+      <!-- SEARCH FILTER -->
+
+      <div class="search-box">
+        <div style="display: flex; gap: 15px; flex-wrap: wrap">
+          <input
+            type="text"
+            id="fileSearch"
+            placeholder="Search file name, type, uploader, status..."
+            style="flex: 1"
+          />
+
+          <select
+            id="statusFilter"
+            style="
+              padding: 18px;
+              border: none;
+              border-radius: 12px;
+              font-size: 18px;
+            "
+          >
+            <option value="">All Status</option>
+
+            <option value="genuine">Genuine</option>
+
+            <option value="harmful">Harmful</option>
+
+            <option value="duplicate">Duplicate</option>
+
+            <option value="fake">Fake</option>
+          </select>
+
+          <input
+            type="date"
+            id="dateFilter"
+            style="
+              padding: 18px;
+              border: none;
+              border-radius: 12px;
+              font-size: 18px;
+            "
+          />
+        </div>
+      </div>
+
+      <!-- FILE TABLE -->
+
+      <div
+        class="details-box"
+        style="overflow: auto; max-height: 500px; width: 100%"
+      >
+        <table style="width: 100%; border-collapse: collapse; text-align: left">
+          <thead>
+            <tr
+              style="
+                border-bottom: 2px solid #eee;
+                height: 60px;
+                font-size: 18px;
+              "
+            >
+              <th>S.no</th>
+              <th>File</th>
+              <th>Type</th>
+              <th>Uploaded By</th>
+              <th>File Size</th>
+
+              <th>Status</th>
+              <th>Uploaded Date</th>
+            </tr>
+          </thead>
+
+          <tbody id="filesTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="account" class="main" style="display: none">
+      <div class="account-container">
+        <div class="account-card">
+          <form id="accountForm">
+            <!-- USERNAME -->
+
+            <div class="input-group">
+              <input
+                type="text"
+                id="oldUsername"
+                placeholder="Enter old username"
+              />
+            </div>
+
+            <div class="input-group">
+              <input
+                type="text"
+                id="newUsername"
+                placeholder="Enter new username"
+              />
+            </div>
+
+            <!-- EMAIL -->
+
+            <div class="input-group">
+              <input type="email" id="oldEmail" placeholder="Enter old email" />
+            </div>
+
+            <div class="input-group">
+              <input type="email" id="newEmail" placeholder="Enter new email" />
+            </div>
+
+            <!-- PASSWORD -->
+
+            <div class="input-group">
+              <div class="password-box">
+                <input
+                  type="password"
+                  id="oldPassword"
+                  placeholder="Enter old password"
+                />
+
+                <span onclick="togglePassword('oldPassword')">
+                  <i class="fa-solid fa-eye"></i>
+                </span>
+              </div>
+            </div>
+
+            <div class="input-group">
+              <div class="password-box">
+                <input
+                  type="password"
+                  id="newPassword"
+                  placeholder="Enter new password"
+                />
+
+                <span onclick="togglePassword('newPassword')">
+                  <i class="fa-solid fa-eye"></i>
+                </span>
+              </div>
+            </div>
+
+            <!-- BUTTON -->
+
+            <button type="submit" class="update-btn">Update Account</button>
+          </form>
+
+          <!-- MESSAGE -->
+
+          <div id="accountMessage"></div>
+        </div>
+      </div>
+    </div>
+    <script>
+      /* =========================================================
+            SIDEBAR MENUS
+            ========================================================= */
+
+      const dashboardMenu = document.getElementById("dashboardMenu");
+      const usersMenu = document.getElementById("usersMenu");
+      const filesMenu = document.getElementById("filesMenu");
+      const accountMenu = document.getElementById("accountMenu");
+
+      /* =========================================================
+            PAGES
+            ========================================================= */
+
+      const dashboardPage = document.getElementById("dashboardPage");
+      const usersPage = document.getElementById("usersPage");
+      const filesPage = document.getElementById("filesPage");
+      const accountPage = document.getElementById("account");
+
+      /* =========================================================
+            HIDE ALL PAGES
+            ========================================================= */
+
+      function hideAllPages() {
+        dashboardPage.style.display = "none";
+        usersPage.style.display = "none";
+        filesPage.style.display = "none";
+        accountPage.style.display = "none";
+      }
+
+      /* =========================================================
+            REMOVE ACTIVE CLASS
+            ========================================================= */
+
+      function removeActive() {
+        dashboardMenu.classList.remove("active");
+        usersMenu.classList.remove("active");
+        filesMenu.classList.remove("active");
+        accountMenu.classList.remove("active");
+      }
+
+      /* =========================================================
+            MENU CLICK EVENTS
+            ========================================================= */
+
+      dashboardMenu.onclick = () => {
+        hideAllPages();
+        removeActive();
+
+        dashboardPage.style.display = "block";
+
+        dashboardMenu.classList.add("active");
+
+        loadDashboard();
+      };
+
+      usersMenu.onclick = () => {
+        hideAllPages();
+        removeActive();
+
+        usersPage.style.display = "block";
+
+        usersMenu.classList.add("active");
+
+        loadUsersAnalytics();
+      };
+
+      filesMenu.onclick = () => {
+        hideAllPages();
+        removeActive();
+
+        filesPage.style.display = "block";
+
+        filesMenu.classList.add("active");
+
+        loadFiles();
+      };
+
+      accountMenu.onclick = () => {
+        hideAllPages();
+        removeActive();
+
+        accountPage.style.display = "block";
+
+        accountMenu.classList.add("active");
+      };
+
+      /* =========================================================
+            WEEKLY CHART
+            ========================================================= */
+
+      const weeklyChart = new Chart(document.getElementById("weeklyChart"), {
+        type: "line",
+
+        data: {
+          labels: [],
+
+          datasets: [
+            {
+              label: "Weekly Uploads",
+
+              data: [],
+
+              borderColor: "#2563eb",
+
+              backgroundColor: "rgba(37,99,235,0.2)",
+
+              fill: true,
+
+              tension: 0.4,
+
+              borderWidth: 4,
+
+              pointRadius: 5,
+
+              pointHoverRadius: 10,
+
+              pointBackgroundColor: "#2563eb",
+
+              pointBorderColor: "#fff",
+
+              pointBorderWidth: 2,
+
+              pointHoverBackgroundColor: "#fff",
+
+              pointHoverBorderColor: "#2563eb",
+
+              pointHoverBorderWidth: 3,
+            },
+          ],
+        },
+
+        options: {
+          interaction: {
+            mode: "index",
+            intersect: false,
+          },
+
+          hover: {
+            mode: "nearest",
+            intersect: false,
+          },
+
+          animation: {
+            duration: 1200,
+            easing: "easeInOutQuart",
+          },
+          responsive: true,
+
+          maintainAspectRatio: false,
+
+          plugins: {
+            tooltip: {
+              enabled: true,
+
+              backgroundColor: "rgba(0,0,0,0.85)",
+
+              titleColor: "#fff",
+
+              bodyColor: "#fff",
+
+              padding: 10,
+
+              cornerRadius: 8,
+
+              displayColors: true,
+
+              caretSize: 6,
+
+              callbacks: {
+                label: function (context) {
+                  return " Weekly Uploads: " + context.parsed.y;
+                },
+              },
+            },
+          },
+
+          scales: {
+            y: {
+              beginAtZero: true,
+            },
+          },
+        },
+      });
+
+      /* =========================================================
+            DONUT CHART
+            ========================================================= */
+
+      const harmChart = new Chart(document.getElementById("harmChart"), {
+        type: "doughnut",
+
+        data: {
+          labels: ["Genuine", "Harmful"],
+
+          datasets: [
+            {
+              data: [0, 0, 0, 0],
+
+              backgroundColor: ["#22c55e", "#ef4444"],
+              hoverOffset: 25,
+              hoverBorderWidth: 4,
+              hoverBorderColor: "#fff",
+            },
+          ],
+        },
+
+        options: {
+          responsive: true,
+          cutout: "60%",
+          animation: {
+            animationRotate: true,
+            animateScale: true,
+            duration: 2000,
+            easing: "easeInOutQuart",
+          },
+
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: function (context) {
+                  const total = context.dataset.data.reduce((a, b) => a + b, 0);
+
+                  const value = context.raw;
+
+                  const percentage = ((value / total) * 100).toFixed(1);
+
+                  return `${context.label}: ${value} (${percentage}%)`;
+                },
+              },
+            },
+          },
+        },
+      });
+
+      /* =========================================================
+            USER TREND CHART
+            ========================================================= */
+
+      const userTrendChart = new Chart(
+        document.getElementById("userTrendChart"),
+        {
+          type: "line",
+
+          data: {
+            labels: [],
+
+            datasets: [
+              {
+                label: "User Uploads",
+
+                data: [],
+
+                borderColor: "#7b2cbf",
+
+                backgroundColor: "rgba(123,44,191,0.2)",
+
+                fill: true,
+
+                tension: 0.4,
+
+                borderWidth: 4,
+                pointRadius: 5,
+
+                pointHoverRadius: 9,
+
+                pointHoverBackgroundColor: "#fff",
+
+                pointHoverBorderColor: "#7b2cbf",
+
+                pointHoverBorderWidth: 3,
+              },
+            ],
+          },
+
+          options: {
+            responsive: true,
+
+            maintainAspectRatio: false,
+            interaction: {
+              mode: "index",
+              intersect: false,
+            },
+
+            hover: {
+              mode: "nearest",
+              intersect: false,
+            },
+            plugins: {
+              tooltip: {
+                enabled: true,
+
+                backgroundColor: "rgba(0,0,0,0.85)",
+
+                titleColor: "#fff",
+
+                bodyColor: "#fff",
+
+                padding: 10,
+
+                cornerRadius: 8,
+
+                displayColors: true,
+
+                callbacks: {
+                  label: function (context) {
+                    return " Uploads: " + context.parsed.y;
+                  },
+                },
+              },
+            },
+
+            scales: {
+              y: {
+                beginAtZero: true,
+              },
+            },
+          },
+        },
+      );
+
+      /* =========================================================
+            LOGIN CHART
+            ========================================================= */
+
+      const loginChart = new Chart(document.getElementById("loginChart"), {
+        type: "line",
+
+        data: {
+          labels: [],
+
+          datasets: [
+            {
+              label: "Login Activity",
+
+              data: [],
+
+              borderColor: "#f4b400",
+
+              backgroundColor: "rgba(244,180,0,0.2)",
+
+              fill: true,
+
+              tension: 0.4,
+
+              borderWidth: 4,
+              pointRadius: 5,
+
+              pointHoverRadius: 9,
+
+              pointHoverBackgroundColor: "#fff",
+
+              pointHoverBorderColor: "#f4b400",
+
+              pointHoverBorderWidth: 3,
+            },
+          ],
+        },
+
+        options: {
+          responsive: true,
+
+          maintainAspectRatio: false,
+          interaction: {
+            mode: "index",
+            intersect: false,
+          },
+
+          hover: {
+            mode: "nearest",
+            intersect: false,
+          },
+          plugins: {
+            tooltip: {
+              enabled: true,
+
+              backgroundColor: "rgba(0,0,0,0.85)",
+
+              titleColor: "#fff",
+
+              bodyColor: "#fff",
+
+              padding: 10,
+
+              cornerRadius: 8,
+
+              displayColors: true,
+
+              callbacks: {
+                label: function (context) {
+                  return " Logins: " + context.parsed.y;
+                },
+              },
+            },
+          },
+
+          scales: {
+            y: {
+              beginAtZero: true,
+            },
+          },
+        },
+      });
+
+      /* =========================================================
+            LOAD DASHBOARD
+            ========================================================= */
+
+      async function loadDashboard() {
+        try {
+          const response = await fetch("/live-dashboard");
+
+          if (!response.ok) {
+            throw new Error("Server Error");
+          }
+          const data = await response.json();
+
+          if (data.total_users !== undefined) {
+            document.getElementById("totalUsers").innerHTML = data.total_users;
+          }
+
+          if (data.total_files !== undefined) {
+            document.getElementById("totalFiles").innerHTML = data.total_files;
+          }
+
+          if (data.harmful_files !== undefined) {
+            document.getElementById("harmfulFiles").innerHTML =
+              data.harmful_files;
+          }
+
+          if (data.today_uploads !== undefined) {
+            document.getElementById("todayUploads").innerHTML =
+              data.today_uploads;
+          }
+
+          weeklyChart.data.labels = data.weekly_labels || [];
+
+          weeklyChart.data.datasets[0].data = data.weekly_data || [];
+
+          weeklyChart.update();
+
+          harmChart.data.datasets[0].data = [
+            data.genuine_files || 0,
+
+            data.harmful_files || 0,
+
+            data.fake_files || 0,
+
+            data.duplicate_files || 0,
+          ];
+
+          harmChart.update();
+        } catch (error) {
+          console.log(error);
+        }
+      }
+      loadDashboard();
+      setInterval(() => {
+        loadDashboard();
+      }, 5000);
+
+      /* =========================================================
+            LOAD USERS
+            ========================================================= */
+
+      async function loadUsersAnalytics() {
+        try {
+          const response = await fetch("/dashboard-stats");
+
+          const data = await response.json();
+
+          document.getElementById("activeUsers").innerHTML =
+            data.active_users || 0;
+
+          document.getElementById("inactiveUsers").innerHTML =
+            data.inactive_users || 0;
+
+          document.getElementById("harmUsers").innerHTML =
+            data.harmful_users || 0;
+
+          document.getElementById("newUsers").innerHTML =
+            data.new_users_today || 0;
+        } catch (error) {
+          console.log(error);
+        }
+      }
+
+      /* =========================================================
+            SEARCH USER
+            ========================================================= */
+
+      document
+        .getElementById("searchUser")
+        .addEventListener("keyup", async function () {
+          const value = this.value.trim();
+
+          if (value === "") {
+            document.getElementById("particularSection").style.display = "none";
+            userTrendChart.data.labels = [];
+            userTrendChart.data.datasets[0].data = [];
+            userTrendChart.update();
+            loginChart.data.labels = [];
+            loginChart.data.datasets[0].data = [];
+            loginChart.update();
+
+            return;
+          }
+
+          try {
+            const response = await fetch(`/user-details/${value}`);
+
+            const data = await response.json();
+
+            if (!data.success) {
+              document.getElementById("particularSection").style.display =
+                "none";
+
+              userTrendChart.data.labels = [];
+
+              userTrendChart.data.datasets[0].data = [];
+
+              userTrendChart.update();
+
+              loginChart.data.labels = [];
+
+              loginChart.data.datasets[0].data = [];
+
+              loginChart.update();
+
+              return;
+            }
+
+            document.getElementById("particularSection").style.display =
+              "block";
+
+            document.getElementById("detailUsername").innerHTML = data.username;
+
+            document.getElementById("detailId").innerHTML = data.user_id;
+
+            document.getElementById("detailTotal").innerHTML = data.total_files;
+
+            document.getElementById("detailHarmful").innerHTML =
+              data.harmful_files;
+
+            document.getElementById("detailFake").innerHTML = data.fake_files;
+
+            document.getElementById("detailGenuine").innerHTML =
+              data.genuine_files;
+
+            document.getElementById("detailDuplicate").innerHTML =
+              data.duplicate_files;
+
+            document.getElementById("detailStatus").innerHTML = data.status;
+
+            userTrendChart.data.labels = data.weekly_labels || [];
+
+            userTrendChart.data.datasets[0].data = data.weekly_data || [];
+
+            userTrendChart.update();
+
+            loginChart.data.labels = data.weekly_labels || [];
+
+            loginChart.data.datasets[0].data = data.login_data || [];
+
+            loginChart.update();
+          } catch (error) {
+            console.log(error);
+          }
+        });
+
+      /* =========================================================
+            LOAD FILES
+            ========================================================= */
+
+      async function loadFiles() {
+        try {
+          const search = document.getElementById("fileSearch").value;
+
+          const status = document.getElementById("statusFilter").value;
+
+          const date = document.getElementById("dateFilter").value;
+
+          const response = await fetch(
+            `/get-files?search=${search}&status=${status}&date=${date}`,
+          );
+
+          const data = await response.json();
+
+          document.getElementById("fileTotal").innerHTML = data.total_files;
+
+          document.getElementById("genuineCount").innerHTML =
+            data.genuine_files;
+
+          document.getElementById("harmfulCount").innerHTML =
+            data.harmful_files;
+
+          document.getElementById("duplicateCount").innerHTML =
+            data.duplicate_files;
+
+          document.getElementById("fakeCount").innerHTML = data.fake_files;
+
+          let table = "";
+
+          data.files.forEach((file, index) => {
+            table += `
+
+                        <tr>
+
+                            <td>${index + 1}</td>
+
+                            <td>${file.filename}</td>
+
+                            <td>${file.filetype}</td>
+
+                            <td>${file.uploaded_by}</td>
+
+                            <td>${file.filesize}</td>
+
+                            <td>
+                                <span class="status-badge ${file.status.toLowerCase()}">
+                                    ${file.status}
+                                </span>
+                            </td>
+
+                            <td>${file.created_at}</td>
+
+                        </tr>
+                        `;
+          });
+
+          document.getElementById("filesTableBody").innerHTML = table;
+        } catch (error) {
+          console.log(error);
+        }
+      }
+
+      /* =========================================================
+            FILE FILTERS
+            ========================================================= */
+
+      document
+        .getElementById("fileSearch")
+        .addEventListener("keyup", loadFiles);
+
+      document
+        .getElementById("statusFilter")
+        .addEventListener("change", loadFiles);
+
+      document
+        .getElementById("dateFilter")
+        .addEventListener("change", loadFiles);
+
+      /* =========================================================
+ADMIN ACCOUNT UPDATE
+========================================================= */
+
+      document
+        .getElementById("accountForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          // =========================================
+          // GET INPUT VALUES
+          // =========================================
+
+          const old_username = document.getElementById("oldUsername").value;
+
+          const new_username = document.getElementById("newUsername").value;
+
+          const old_email = document.getElementById("oldEmail").value;
+
+          const new_email = document.getElementById("newEmail").value;
+
+          const old_password = document.getElementById("oldPassword").value;
+
+          const new_password = document.getElementById("newPassword").value;
+
+          // =========================================
+          // FETCH API
+          // =========================================
+
+          const response = await fetch("/admin_update_account", {
+            method: "POST",
+
+            headers: {
+              "Content-Type": "application/json",
+            },
+
+            body: JSON.stringify({
+              old_username: old_username,
+
+              new_username: new_username,
+
+              old_email: old_email,
+
+              new_email: new_email,
+
+              old_password: old_password,
+
+              new_password: new_password,
+            }),
+          });
+
+          // =========================================
+          // RESPONSE
+          // =========================================
+
+          const result = await response.json();
+
+          alert(result.message);
+        });
+      /* =========================================================
+            PASSWORD TOGGLE
+            ========================================================= */
+
+      function togglePassword(id) {
+        const input = document.getElementById(id);
+
+        if (input.type === "password") {
+          input.type = "text";
+        } else {
+          input.type = "password";
+        }
+      }
+    </script>
+  </body>
+</html>
