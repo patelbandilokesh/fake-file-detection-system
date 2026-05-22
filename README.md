@@ -28,16 +28,16 @@ Bandi Lokesh
 ## Screenshots
 
 ### Home Page
-![Home Page](home%20page.png)
+![Home Page](home%20page.png.png)
 
 ### User Login Page
-![Login Page](user%20login%20page.png)
+![Login Page](user%20login%20page.png.png)
 
 ### Upload File Page
-![Upload Page](upload%20file.png)
+![Upload Page](upload%20file.png.png)
 
 ### Detection Result Page
-![Result Page](result.png)
+![Result Page](result.png.png)
 
 ### Admin Dashboard
 ![Admin Dashboard](admin%20dashboard.png.png)
