@@ -20,13 +20,17 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 # Simulated database (store hashes)
 stored_hashes = set()
 
-app.secret_key = "mysecretkey"
+# Railway నుండి Secret Key తెచ్చుకోవడానికి
+app.secret_key = os.getenv('SECRET_KEY', 'mysecretkey')
 
-# ---------------- MYSQL ----------------
-app.config["MYSQL_HOST"] = "localhost"
-app.config["MYSQL_USER"] = "root"
-app.config["MYSQL_PASSWORD"] = "Lokesh@123"
-app.config["MYSQL_DB"] = "fake_file_system"
+# --------- MYSQL CONFIGURATIONS (RAILWAY) ---------
+app.config["MYSQL_HOST"] = os.getenv("MYSQLHOST")
+app.config["MYSQL_USER"] = os.getenv("MYSQLUSER")
+app.config["MYSQL_PASSWORD"] = os.getenv("MYSQLPASSWORD")
+app.config["MYSQL_DB"] = os.getenv("MYSQLDATABASE")
+
+# ఒకవేళ నీ Railway డేటాబేస్ కి పోర్ట్ అవసరమైతే (Default: 3306)
+app.config["MYSQL_PORT"] = int(os.getenv("MYSQLPORT", 3306))
 
 mysql = MySQL(app)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
