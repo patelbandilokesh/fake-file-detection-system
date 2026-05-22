@@ -1,0 +1,926 @@
+<!doctype html>
+<html>
+  <head>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>User Dashboard</title>
+
+    <style>
+      body {
+        margin: 0;
+        font-family: Segoe UI;
+        background: linear-gradient(135deg, #0f172a, #1e3a8a);
+        color: white;
+      }
+
+      /* TOP ALERT */
+      .alert {
+        position: fixed;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #ef4444;
+        padding: 12px 25px;
+        border-radius: 10px;
+        display: none;
+        z-index: 999;
+      }
+
+      /* LAYOUT */
+      .main {
+        display: flex;
+        height: 100vh;
+      }
+
+      /* SIDEBAR */
+      .sidebar {
+        width: 240px;
+        background: #0f172a;
+        padding: 20px;
+      }
+      .logo {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .logo img {
+        width: 60px;
+        border-radius: 50%;
+      }
+      .sidebar button {
+        width: 100%;
+        padding: 12px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 12px;
+        background: #1e293b;
+        color: white;
+        cursor: pointer;
+        font-size: 15px;
+      }
+      .sidebar button:hover {
+        background: #3b82f6;
+      }
+
+      /* CONTENT */
+      .content {
+        flex: 1;
+        padding: 30px;
+        overflow: auto;
+      }
+
+      /* CARD */
+      .card {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 25px;
+        border-radius: 15px;
+        margin-bottom: 20px;
+      }
+
+      /* GRID */
+      /* ===== GRAPH GRID ===== */
+.graph-container {
+  display: grid;
+
+  /* 2 graphs per row */
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 25px;
+
+  margin-top: 20px;
+}
+
+/* ===== GRAPH CARD ===== */
+.graph-box {
+
+  /* square shape */
+  aspect-ratio: 1 / 1;
+
+  background: linear-gradient(135deg, #06b6d4, #3b82f6);
+
+  border-radius: 18px;
+
+  padding: 20px;
+
+  position: relative;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
+
+/* ===== CANVAS ===== */
+.graph-box canvas {
+
+  width: 100% !important;
+  height: 100% !important;
+
+  display: block;
+}
+
+/* ===== BAR + LINE SPECIAL FIX ===== */
+#barChart,
+#lineChart {
+  align-self: flex-end;
+}
+.graph-box:hover{
+   transform: translateY(-5px);
+   transition: 0.3s;
+}
+      /* CENTER */
+      .center {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 70vh;
+      }
+
+      /* TABLE */
+      .table-box {
+        max-height: 350px;
+        overflow: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        padding: 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        text-align: left;
+      }
+      td {
+        max-width: 120px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      /* BUTTONS */
+      .btn {
+        padding: 10px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        margin: 5px;
+      }
+      .red {
+        background: #ef4444;
+      }
+      .orange {
+        background: #f97316;
+      }
+      .blue {
+        background: #3b82f6;
+      }
+      .green {
+        background: #22c55e;
+      }
+
+      /* INPUT */
+      input {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border: none;
+        border-radius: 8px;
+      }
+
+      /* PASSWORD EYE */
+      .password-box {
+        position: relative;
+      }
+      .eye {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: black;
+      }
+
+      /* SECTIONS */
+      .section {
+        display: none;
+      }
+      .active {
+        display: block;
+      }
+      /* CENTER FULL PAGE */
+.account-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* CARD STYLE */
+.account-card {
+  background: linear-gradient(135deg, #1e3c72, #2a5298);
+  padding: 25px 30px;
+  border-radius: 15px;
+  width: 350px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+/* TITLE */
+.account-card h2 {
+  color: white;
+  margin-bottom: 15px;
+}
+
+/* INPUTS SMALL + CLEAN */
+.account-card input {
+  width: 70%;
+  padding: 8px 10px;
+  margin: 8px 0;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  font-size: 14px;
+}
+
+/* BUTTON STYLE */
+.account-card button {
+  width: 80%;
+  margin-top: 10px;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(45deg, #00c6ff, #0072ff);
+  color: white;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+/* HOVER EFFECT */
+.account-card button:hover {
+  transform: scale(1.05);
+  background: linear-gradient(45deg, #0072ff, #00c6ff);
+}
+/* 🔥 PASSWORD BOX SMALL WIDTH */
+.password-box {
+  position: relative;
+  width: 80%;          /* 👈 reduce container size */
+  margin: auto;        /* 👈 center */
+}
+
+/* password input */
+.password-box input {
+  width: 80% !important;   /* 👈 inside box full but box itself small */
+  padding: 8px 35px 8px 10px;
+}
+
+/* eye icon */
+.password-box span {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: black;
+}
+    </style>
+  </head>
+
+  <body>
+    <div class="alert" id="alert"></div>
+
+    <div class="main">
+      <!-- SIDEBAR -->
+      <div class="sidebar">
+        <div class="logo">
+          <img src="https://cdn-icons-png.flaticon.com/512/847/847969.png" />
+          <h3>User Panel</h3>
+        </div>
+
+        <button onclick="show('dashboard')">🏠 Dashboard</button>
+        <button onclick="show('upload')">📤 Upload</button>
+        <button onclick="show('history')">📁 History</button>
+        <button onclick="show('account')">👤 Account</button>
+        <button onclick="logout()">🚪 Logout</button>
+      </div>
+
+      <!-- CONTENT -->
+      <div class="content">
+        <h2>👋 Welcome, User</h2>
+
+        <!-- DASHBOARD -->
+
+        <div id="dashboard" class="section active">
+          <!-- ✅ FILTER BUTTONS -->
+          <div style="margin-bottom: 15px">
+            <button class="btn blue" onclick="changeFilter('7days')">
+              7 Days
+            </button>
+            <button class="btn green" onclick="changeFilter('30days')">
+              30 Days
+            </button>
+            <button class="btn orange" onclick="changeFilter('year')">
+              1 Year
+            </button>
+          </div>
+
+          <!-- ✅ GRAPHS -->
+          <div class="graph-container">
+            <div class="graph-box">
+              <canvas id="pieChart"></canvas>
+            </div>
+            <div class="graph-box">
+              <canvas id="barChart"></canvas>
+            </div>
+            <div class="graph-box">
+              <canvas id="lineChart"></canvas>
+            </div>
+            <div class="graph-box">
+              <canvas id="doughnutChart"></canvas>
+            </div>
+          </div>
+        </div>
+        <!-- UPLOAD -->
+        <div id="upload" class="section">
+          <div class="center">
+            <div class="card">
+              <h2>Upload File</h2>
+              <form
+                action="/upload"
+                method="POST"
+                enctype="multipart/form-data"
+              >
+                <input type="file" name="file" required />
+                <input type="submit" class="btn blue" value="Upload">
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- HISTORY -->
+
+        <div id="history" class="section">
+          <div class="card">
+            <h2>History</h2>
+
+            <input placeholder="Search..." onkeyup="filterData(this.value)" />
+
+            <button class="btn red" onclick="deleteAll()">Delete All</button>
+            <button class="btn orange" onclick="deleteHarmful()">
+              Delete Harmful
+            </button>
+            <button class="btn blue" onclick="deleteSelected()">
+              Delete Selected
+            </button>
+
+            <div class="table-box">
+              <table>
+                <thead>
+                  <tr>
+                    <th><input type="checkbox" onclick="selectAll(this)" /></th>
+                    <th>Name</th>
+                    <th>Size</th>
+                    <th>Type</th>
+                    <th>SHA512</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="data"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ACCOUNT -->
+<div id="account" class="section">
+  <div class="account-container">
+    <div class="account-card">
+    <h2>Account Settings</h2>
+<form id="accountForm">
+
+  <input type="text" id="old_username" placeholder="Username" />
+  <input type="text" id="new_username" placeholder="New Username" />
+
+  <input type="email" id="old_email" placeholder="Old Email" />
+  <input type="email" id="new_email" placeholder="New Email" />
+
+  <div class="password-box">
+    <input type="password" id="oldPassword" placeholder="Old Password">
+    <span onclick="togglePassword('oldPassword')">👁</span>
+  </div>
+
+  <div class="password-box">
+    <input type="password" id="newPassword" placeholder="New Password">
+    <span onclick="togglePassword('newPassword')">👁</span>
+  </div>
+
+  <button type="submit">Update</button>
+
+</form>
+  </div>
+</div>
+</div>
+    <script>
+      function show(id) {
+        document
+          .querySelectorAll(".section")
+          .forEach((s) => s.classList.remove("active"));
+        document.getElementById(id).classList.add("active");
+        if (id === "history") loadHistory();
+      }
+
+      function notify(msg) {
+        let a = document.getElementById("alert");
+        a.innerText = msg;
+        a.style.display = "block";
+        setTimeout(() => (a.style.display = "none"), 2000);
+      }
+
+      /* FIXED PASSWORD */
+      function togglePass(id) {
+        let p = document.getElementById(id);
+        p.type = p.type === "password" ? "text" : "password";
+      }
+
+      /* LOAD HISTORY */
+      function loadHistory() {
+        fetch("/get_history")
+          .then((res) => res.json())
+          .then((data) => {
+            let table = document.getElementById("data");
+            table.innerHTML = "";
+
+            data.forEach((row) => {
+              table.innerHTML += `
+          <tr>
+            <td><input type="checkbox" class="rowCheck" value="${row.id}"></td>
+            <td>${row.name}</td>
+            <td>${row.size}</td>
+            <td>${row.type}</td>
+            <td>${row.hash.substring(0, 10)}...</td>
+            <td>${row.status}</td>
+            <td>
+              <button class="btn red" onclick="deleteOne(${row.id})">Delete</button>
+            </td>
+          </tr>
+        `;
+            });
+          });
+      }
+
+      /* SEARCH */
+      function filterData(value) {
+        let search = value.toLowerCase();
+        document.querySelectorAll("#data tr").forEach((row) => {
+          row.style.display = row.innerText.toLowerCase().includes(search)
+            ? ""
+            : "none";
+        });
+      }
+
+      /* SELECT ALL */
+      function selectAll(source) {
+        document
+          .querySelectorAll(".rowCheck")
+          .forEach((cb) => (cb.checked = source.checked));
+      }
+
+      /* DELETE ONE */
+      function deleteOne(id) {
+        fetch(`/delete_file/${id}`, { method: "DELETE" }).then(() => {
+          notify("Deleted");
+          loadHistory();
+        });
+      }
+
+      /* DELETE SELECTED */
+      function deleteSelected() {
+        let ids = [];
+        document
+          .querySelectorAll(".rowCheck:checked")
+          .forEach((cb) => ids.push(cb.value));
+
+        if (ids.length === 0) return notify("No selection");
+
+        fetch("/delete_selected", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ids }),
+        }).then(() => {
+          notify("Selected Deleted");
+          loadHistory();
+        });
+      }
+
+      /* DELETE ALL */
+      function deleteAll() {
+        if (!confirm("Delete all data?")) return;
+
+        fetch("/delete_all", { method: "POST" }).then(() => {
+          notify("All Deleted");
+          loadHistory();
+        });
+      }
+
+      /* DELETE HARMFUL */
+      function deleteHarmful() {
+        fetch("/delete_harmful", { method: "POST" }).then(() => {
+          notify("Harmful Deleted");
+          loadHistory();
+        });
+      }
+
+      function logout() {
+        notify("Logged out");
+      }
+      function logout() {
+  window.location.href = "/logout";
+}
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+let lineChart;
+let barChart;
+let pieChart;
+let doughnutChart;
+
+let currentFilter = "30days";
+
+
+/* ================= FILTER ================= */
+
+function changeFilter(filter) {
+
+    currentFilter = filter;
+
+    loadAll(filter);
+}
+
+
+/* ================= COMMON OPTIONS ================= */
+
+function chartOptions(type="normal") {
+
+    return {
+
+        responsive: true,
+        maintainAspectRatio: false,
+
+        animation: {
+            duration: 800
+        },
+
+        plugins: {
+
+            legend: {
+                labels: {
+                    color: "white"
+                }
+            },
+
+            tooltip: {
+
+                callbacks: {
+
+                    label: function(ctx) {
+
+                        let value = ctx.raw;
+
+                        if(type === "pie") {
+
+                            let total = ctx.dataset.data.reduce((a,b)=>a+b,0);
+
+                            let percentage = total
+                                ? ((value / total) * 100).toFixed(1)
+                                : 0;
+
+                            return ctx.label + ": " + value +
+                                   " (" + percentage + "%)";
+                        }
+
+                        return ctx.label + ": " + value;
+                    }
+                }
+            }
+        },
+
+        scales: type === "pie"
+        ? {}
+        : {
+
+            x: {
+                ticks: {
+                    color: "white"
+                },
+
+                grid: {
+                    color: "rgba(255,255,255,0.1)"
+                }
+            },
+
+            y: {
+                beginAtZero: true,
+
+                ticks: {
+                    color: "white"
+                },
+
+                grid: {
+                    color: "rgba(255,255,255,0.1)"
+                }
+            }
+        }
+    };
+}
+
+
+/* ================= LOAD ALL ================= */
+
+function loadAll(filter="30days") {
+
+    /* ================= BAR + LINE ================= */
+
+    fetch(`/dashboard_data/${filter}`)
+
+    .then(res => res.json())
+
+    .then(data => {
+
+        console.log("BAR =", data.bar);
+        console.log("LINE =", data.line);
+
+        /* ===== BAR ===== */
+
+        let barLabels = data.bar.map(d => d.label);
+        let barValues = data.bar.map(d => d.value);
+
+        if(!barChart) {
+
+            barChart = new Chart(
+                document.getElementById("barChart"),
+                {
+
+                    type: "bar",
+
+                    data: {
+
+                        labels: barLabels,
+
+                        datasets: [{
+
+                            label: "File Types",
+
+                            data: barValues,
+
+                            backgroundColor: [
+                                "#22c55e",
+                                "#3b82f6",
+                                "#f97316",
+                                "#ef4444"
+                            ],
+
+                            borderRadius: 8
+                        }]
+                    },
+
+                    options: chartOptions()
+                }
+            );
+
+        } else {
+
+            barChart.data.labels = barLabels;
+
+            barChart.data.datasets[0].data = barValues;
+
+            barChart.update();
+        }
+
+
+        /* ===== LINE ===== */
+
+        let lineLabels = data.line.map(d => d.label);
+
+        let lineValues = data.line.map(d => d.value);
+
+        if(!lineChart) {
+
+            lineChart = new Chart(
+                document.getElementById("lineChart"),
+                {
+
+                    type: "line",
+
+                    data: {
+
+                        labels: lineLabels,
+
+                        datasets: [{
+
+                            label: "Scans",
+
+                            data: lineValues,
+
+                            borderColor: "#00ffff",
+
+                            backgroundColor: "rgba(0,255,255,0.2)",
+
+                            fill: true,
+
+                            tension: 0.4,
+
+                            pointBackgroundColor: "#00ffff",
+
+                            pointRadius: 4
+                        }]
+                    },
+
+                    options: chartOptions()
+                }
+            );
+
+        } else {
+
+            lineChart.data.labels = lineLabels;
+
+            lineChart.data.datasets[0].data = lineValues;
+
+            lineChart.update();
+        }
+
+    })
+
+
+    /* ================= PIE + DONUT ================= */
+
+    fetch("/status_data")
+
+    .then(res => res.json())
+
+    .then(data => {
+
+        let labels = data.map(d => d.label);
+
+        let values = data.map(d => d.value);
+
+        let colors = labels.map(l => {
+
+            l = l.toLowerCase();
+
+            if(l === "duplicate") return "#48278c";
+
+            if(l === "fake") return "#fdbb06";
+
+            if(l === "genuine") return "#22c55e";
+
+            if(l === "harmful") return "#f30632";
+
+            return "#999";
+        });
+
+
+        /* ===== PIE ===== */
+
+        if(!pieChart) {
+
+            pieChart = new Chart(
+                document.getElementById("pieChart"),
+                {
+
+                    type: "pie",
+
+                    data: {
+
+                        labels: labels,
+
+                        datasets: [{
+                            data: values,
+                            backgroundColor: colors
+                        }]
+                    },
+
+                    options: chartOptions("pie")
+                }
+            );
+
+        } else {
+
+            pieChart.data.labels = labels;
+
+            pieChart.data.datasets[0].data = values;
+
+            pieChart.update();
+        }
+
+
+        /* ===== DONUT ===== */
+
+        let genuine = 0;
+        let harmful = 0;
+
+        data.forEach(d => {
+
+            let label = d.label.toLowerCase();
+
+            if(label === "genuine")
+                genuine = d.value;
+
+            if(label === "harmful")
+                harmful = d.value;
+        });
+
+
+        if(!doughnutChart) {
+
+            doughnutChart = new Chart(
+                document.getElementById("doughnutChart"),
+                {
+
+                    type: "doughnut",
+
+                    data: {
+
+                        labels: ["Genuine", "Harmful"],
+
+                        datasets: [{
+
+                            data: [genuine, harmful],
+
+                            backgroundColor: [
+                                "#22c55e",
+                                "#f30632"
+                            ]
+                        }]
+                    },
+
+                    options: chartOptions("pie")
+                }
+            );
+
+        } else {
+
+            doughnutChart.data.datasets[0].data =
+                [genuine, harmful];
+
+            doughnutChart.update();
+        }
+
+    });
+
+}
+
+
+/* ================= INITIAL LOAD ================= */
+
+window.onload = () => {
+
+    loadAll(currentFilter);
+
+    // ✅ LIVE AUTO UPDATE
+    setInterval(() => {
+
+        loadAll(currentFilter);
+
+    }, 5000);
+
+};
+
+</script>
+<script>
+document.getElementById("accountForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+
+  const data = {
+    old_username: document.getElementById("old_username").value,
+    new_username: document.getElementById("new_username").value,
+    old_email: document.getElementById("old_email").value,
+    new_email: document.getElementById("new_email").value,
+    old_password: document.getElementById("oldPassword").value,
+    new_password: document.getElementById("newPassword").value,
+  };
+
+  fetch("/update_account", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  })
+  .then(res => res.json())
+  .then(data => alert(data.message))
+  .catch(err => console.error(err));
+});
+</script>
+
+<script>
+function togglePassword(id) {
+  let p = document.getElementById(id);
+  p.type = p.type === "password" ? "text" : "password";
+}
+</script>    
+
+  </body>
+</html>
