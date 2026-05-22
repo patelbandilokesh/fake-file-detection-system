@@ -25,3 +25,19 @@ Dump20260522.sql
 
 ## Author
 Bandi Lokesh
+## Screenshots
+
+### Home Page
+![Home Page](home%20page.png)
+
+### User Login Page
+![Login Page](user%20login%20page.png)
+
+### Upload File Page
+![Upload Page](upload%20file.png)
+
+### Detection Result Page
+![Result Page](result.png)
+
+### Admin Dashboard
+![Admin Dashboard](admin%20dashboard.png.png)
