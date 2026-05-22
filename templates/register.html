@@ -1,0 +1,221 @@
+<html>
+  <head>
+    <title>Fake File Detection System</title>
+    <style>
+                                body{
+                              background: url("{{url_for('static',filename='loginpage.jpeg')}}")no-repeat center center fixed;
+                              background-size: cover;
+                                margin:0;
+                                padding:0;
+                                font-family:Arial,sans-serif;
+                                height:100vh;
+                                display:flex;
+                                justify-content:right;
+                                align-items:center;
+                                }
+                                form{
+                                background:rgba(255,255,255,0.92);
+                                padding:25px;
+                                width:350px;
+                                border-radius:15px;
+                                text-align:center;
+                                position:absolute;
+                                top:60%;
+                                left:38%;
+                                transform:translate(80%,-49.65%);
+                                background:rgba(255,255,255,0.15);
+                                backdrop-filter:blur(5px);
+                                border-radius:15px;
+                                box-shadow:0 8px 25px rgba(0,0,0,0.3);
+                                }
+                                h1{
+                                margin-bottom:20px;
+                                color:#0f172a;
+                                font-size:26px;
+                                }
+                                input:focus{
+                                border-color:#2563eb;
+                                outline:none;
+                                box-shadow:0 0 6px rgba(37,99,235,0.5);
+                                }
+                                button
+                                {
+                                width:95%;
+                                padding:12px;
+                                background:#2563eb;
+                                color:white;
+                                border:none;
+                                border-raidus:8px;
+                                font-size:16px;
+                                cursor:pointer;
+                                margin-top:10px;
+                                transition:0.3s;
+                                }
+                                button:hover{
+                                background:#1d4ed8;
+                                transform:scale(1.03);
+                                }
+                                p{
+                                margin-top:15px;
+                                font-size:14px;
+                                }
+                                a{
+                                text-decoratation;none;
+                                color:#2563eb;
+                                font-weight:bold;
+                                }
+                                a:hover{
+                                text-decoration:underline;
+                                }
+                   .password-field {
+              position: relative;
+              width: 100%;
+            }
+
+            /* ALL inputs same size */
+            input {
+              width: 100%;
+              padding: 12px;
+              margin: 10px 0;
+              border-radius: 8px;
+              border: none;
+              outline: none;
+              font-size: 14px;
+              box-sizing: border-box;   /* 🔥 VERY IMPORTANT */
+            }
+
+            /* only password input ki extra space for eye */
+            .password-field input {
+              padding-right: 40px;
+            }
+
+            /* eye icon */
+            .eye-icon {
+              position: absolute;
+              right: 12px;
+              top: 50%;
+              transform: translateY(-50%);
+              cursor: pointer;
+              color: black;
+              font-size: 16px;
+            }
+            /* FLASH MESSAGE */
+      .flash{
+
+          position: fixed;
+
+          top: 10%;
+          left: 50%;
+
+          transform: translate(-50%, -50%);
+
+          padding: 18px 35px;
+
+          border-radius: 12px;
+
+          color: white;
+
+          font-size: 18px;
+          font-weight: bold;
+
+          z-index: 9999;
+
+          box-shadow: 0 0 20px rgba(0,0,0,0.3);
+
+          animation: popup 0.4s ease;
+      }
+
+      /* SUCCESS */
+      .flash.success{
+          background: #22c55e;
+      }
+
+      /* ERROR */
+      .flash.error{
+          background: #ef4444;
+      }
+
+      @keyframes popup{
+
+          from{
+              opacity:0;
+              transform: translate(-50%, -60%) scale(0.8);
+          }
+
+          to{
+              opacity:1;
+              transform: translate(-50%, -50%) scale(1);
+          }
+      }
+    </style>
+  </head>
+  <body>
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %} {% for category, message in messages %}
+
+    <div class="flash {{ category }}">{{ message }}</div>
+
+    {% endfor %} {% endif %} {% endwith %}
+    <form action="{{url_for('register')}}" method="POST">
+      <h1>CREATE AN ACCOUNT</h1>
+      <input type="email" name="email" placeholder="Email" required /><br />
+      <input
+        type="text"
+        name="username"
+        placeholder="User Name"
+        required
+      /><br />
+      <div class="password-field">
+        <input
+          type="password"
+          name="password"
+          placeholder="password"
+          required
+          id="regPassword"
+        />
+        <span class="eye-icon" onclick="togglePassword('regPassword')">👁</span>
+      </div>
+      <button type="submit">Register</button>
+      <a href="{{url_for('login')}}"><button type="button">Back</button></a>
+    </form>
+    <script>
+      function togglePassword(id) {
+        let input = document.getElementById(id);
+        input.type = input.type === "password" ? "text" : "password";
+      }
+    </script>
+    <script>
+
+      /* ✅ HIDE FLASH */
+      setTimeout(() => {
+
+        let flash = document.querySelector(".flash");
+
+        if (flash) {
+
+          flash.style.opacity = "0";
+
+          setTimeout(() => {
+
+            flash.style.display = "none";
+
+          }, 500);
+
+        }
+
+      }, 1200);
+
+
+      /* ✅ SUCCESS REDIRECT */
+      {% if redirect_to_login %}
+
+        setTimeout(() => {
+
+          window.location.href = "/login";
+
+        }, 1500);
+
+      {% endif %}
+    </script>
+  </body>
+</html>
